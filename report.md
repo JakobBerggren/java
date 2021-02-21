@@ -6,11 +6,12 @@ has to be delivered in a standard, cross-platform format.
 
 ## Project
 
-Name:
+Name: Jsoniter
 
-URL:
+URL: https://github.com/json-iterator/java
 
-One or two sentences describing it
+jsoniter (json-iterator) is fast and flexible JSON parser available in Java and Go. Good deal of the code is ported
+from dsljson, and jsonparser.
 
 ## Onboarding experience
 
