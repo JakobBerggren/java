@@ -39,6 +39,11 @@ for each project, along with reason(s) why you changed to a different one.
    | 84   | 17  | 576   | 2     | 88     |             |           | createEncoder() [245-332] in GsonCompatibilityMode.java         |
    | 97   | 17  | 735   | 1     | 104    |             |           | genObjectUsingHash() [10-113] in CodegenImplObjectHash.java     |
 2. Are the functions just complex, or also long?
+   * Some functions are both long and complex. However, there are definitely cases such as decodeFast() in Base64.java
+   which have a Cyclomatic Complexity 16 with only 34 lines of code. However, with further inspection, it can be seen
+     that this is the case due to there being 2 separate cases of a double if statement written in 1 line of code, which
+     increases the Cyclomatic Complexity big while keeping the number of lines small. However, for most cases, a larger
+     Cyclomatic Complexity will in general mean more lines of code.
 3. What is the purpose of the functions?
 4. Are exceptions taken into account in the given measurements?
 5. Is the documentation clear w.r.t. all the possible outcomes?
