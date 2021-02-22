@@ -22,6 +22,23 @@ there is no need to write much here. If the first project(s) you picked
 ended up being unsuitable, you can describe the "onboarding experience"
 for each project, along with reason(s) why you changed to a different one.
 
+The README in jsoniter's java repository is very short, only containing a few repo badges, a link to
+external documentation, and a link to the scala implementation of the same project. The
+documentation, found at <http://jsoniter.com/java-features.html>, is very comprehensive with respect
+to the actual API, but there is nothing about how to build the project or how to run its tests. 
+
+However, the project follows the standard directory layout of Maven and contains a pom.xml document, which also points towards it being a Maven project.
+
+Using IntelliJ IDEA 2018.3.3 (Ultimate Edition), the project was imported via File -> New -> Project from Version Control -> Git.
+
+After cloning, there was a notification in the event log saying that it had detected a Maven project and a prompt for adding it as a Maven Project. Doing so, and setting the Java JDK version to 15.0.2, cleared all remaining errors and question marks (ignoring the alternative Android framework also present in the repository).
+
+From here, it was easy to run all tests via an IntelliJ Run-configuration of "all java". The result was 1192 passed and 566 failed out of a total 1758 tests.
+
+Many of the failures referenced the dependency JavaAssist. Upgrading this package to the [latest version](https://mvnrepository.com/artifact/org.javassist/javassist/3.27.0-GA) caused more tests to succeed, resulting in 1673 passing and 85 failing tests. Many of the remaining failures reference a failing classloader, which is an advanced feature in Java, and as such we feel that this is enough for the purpose of this lab.
+
+The onboarding experience up to this point was all but well-documented, but felt intuitive enough for someone comfortable with code and tech. It made sense to import it with an IDE as a first step, and from there the prompts were easy to follow.
+
 
 ## Complexity
 
