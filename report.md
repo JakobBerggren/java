@@ -37,7 +37,7 @@ From here, it was easy to run all tests via an IntelliJ Run-configuration of "al
 
 Many of the failures referenced the dependency JavaAssist. Upgrading this package to the [latest version](https://mvnrepository.com/artifact/org.javassist/javassist/3.27.0-GA) caused more tests to succeed, resulting in 1673 passing and 85 failing tests. Many of the remaining failures reference a failing classloader, which is an advanced feature in Java, and as such we feel that this is enough for the purpose of this lab.
 
-The onboarding experience up to this point was all but well-documented, but felt intuitive enough for someone comfortable with code and tech. It made sense to import it with an IDE as a first step, and from there the prompts were easy to follow.
+The onboarding experience up to this point was all but well-documented, but felt intuitive enough for someone comfortable with code and tech. It made sense to import it with an IDE as a first step, and from there the prompts were easy to follow. Dependencies were all installed automatically by the Maven build tool, and the build succeeded with no errors.
 
 
 ## Complexity
