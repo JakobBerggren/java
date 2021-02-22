@@ -34,7 +34,7 @@ for each project, along with reason(s) why you changed to a different one.
    | 60   | 18  | 391   | 1     | 62     |             |           | chooseImpl() [124-185] in Codegen.java = 18                     |
    | 68   | 16  | 467   | 1     | 68     |             |           | decode_() [271-338] in ReflectionObjectDecoder.java             |
    | 55   | 16  | 406   | 2     | 55     |             |           | getDecodingClassDescriptor() [27-81] in ClassDescriptor.java    |
-   | 45   | 16  | 362   | 1     | 45     |             |           | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
+   | 45   | 16  | 362   | 1     | 45     |             | E-Joon Ko | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
    | 73   | 23  | 527   | 2     | 77     |             |           | genReadOp() [195-271] in CodegenImplNative.java                 |
    | 84   | 17  | 576   | 2     | 88     |             |           | createEncoder() [245-332] in GsonCompatibilityMode.java         |
    | 97   | 17  | 735   | 1     | 104    |             |           | genObjectUsingHash() [10-113] in CodegenImplObjectHash.java     |
