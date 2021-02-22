@@ -46,8 +46,8 @@ for each project, along with reason(s) why you changed to a different one.
      Cyclomatic Complexity will in general result in more lines of code.
 3. What is the purpose of the functions?
    * The purpose of a lot of these functions are for specific parsing scenarios. Therefore, the high number of
-     Cyclomatic Complexity in these codes is understandable as parsing includes a lot of "if" due to the high amount of
-     edge cases.
+     Cyclomatic Complexity in these codes is understandable as parsing includes a lot of "if" cases due to the high
+     amount of edge cases.
 4. Are exceptions taken into account in the given measurements?
 5. Is the documentation clear w.r.t. all the possible outcomes?
 
