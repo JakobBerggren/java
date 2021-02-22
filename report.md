@@ -66,7 +66,10 @@ The onboarding experience up to this point was all but well-documented, but felt
      Cyclomatic Complexity in these codes is understandable as parsing includes a lot of "if" cases due to the high
      amount of edge cases.
 4. Are exceptions taken into account in the given measurements?
+   * Exceptions were not taken into account by the lizard tool. Stripping a function of all return-statements and 
+     throws did not affect the CCN, leading to the conclusion that lizards assumes every function to have only one exit point.
 5. Is the documentation clear w.r.t. all the possible outcomes?
+   * The project is not well-documented internally. Comments are few and far-between, and there are no docstrings.
 
 ## Refactoring
 
