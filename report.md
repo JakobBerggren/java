@@ -81,6 +81,155 @@ Carried out refactoring (optional, P+):
 
 git diff ...
 
+### Codegen::chooseImpl, CCN = 18
+
+Codegen::chooseImpl is used to pick the "proper implementation" to instantiate the object if the type bound to is an interface. The function consists of four consecutive if-statements of varying internal complexity. One is very simple, one is simple, and two are complex. The complex ones have, according to lizard, CCNs of 6 and 7, making them the heavy-hitters of this function. Luckily, they both follow the pattern: "if X, then do Y, eventually either throw an exception or return a value". With few function-local values used, the bodies of these if-statements can be easily lifted into separate functions. This reduces the CCN of the chooseImpl-function to 7 and opens up the possibility for easier testing of these two cases. The clearest draw-back of refactoring this function is that it is old and stable code. When, or if, need should arise, then refactoring should be done then and there instead of here and now. Time could be better spent elsewhere instead of refactoring old code unneccessarily. 
+
+<details><summary>Before</summary>
+    
+```Java
+private static Type chooseImpl(Type type) {
+    Type[] typeArgs = new Type[0];
+    Class clazz;
+    if (type instanceof ParameterizedType) {
+        ParameterizedType pType = (ParameterizedType) type;
+        clazz = (Class) pType.getRawType();
+        typeArgs = pType.getActualTypeArguments();
+    } else if (type instanceof WildcardType) {
+        return Object.class;
+    } else {
+        clazz = (Class) type;
+    }
+    Class implClazz = JsoniterSpi.getTypeImplementation(clazz);
+    if (Collection.class.isAssignableFrom(clazz)) {
+        Type compType = Object.class;
+        if (typeArgs.length == 0) {
+            // default to List<Object>
+        } else if (typeArgs.length == 1) {
+            compType = typeArgs[0];
+        } else {
+            throw new IllegalArgumentException(
+                    "can not bind to generic collection without argument types, " +
+                            "try syntax like TypeLiteral<List<Integer>>{}");
+        }
+        if (clazz == List.class) {
+            clazz = implClazz == null ? ArrayList.class : implClazz;
+        } else if (clazz == Set.class) {
+            clazz = implClazz == null ? HashSet.class : implClazz;
+        }
+        return GenericsHelper.createParameterizedType(new Type[]{compType}, null, clazz);
+    }
+    if (Map.class.isAssignableFrom(clazz)) {
+        Type keyType = String.class;
+        Type valueType = Object.class;
+        if (typeArgs.length == 0) {
+            // default to Map<String, Object>
+        } else if (typeArgs.length == 2) {
+            keyType = typeArgs[0];
+            valueType = typeArgs[1];
+        } else {
+            throw new IllegalArgumentException(
+                    "can not bind to generic collection without argument types, " +
+                            "try syntax like TypeLiteral<Map<String, String>>{}");
+        }
+        if (clazz == Map.class) {
+            clazz = implClazz == null ? HashMap.class : implClazz;
+        }
+        if (keyType == Object.class) {
+            keyType = String.class;
+        }
+        MapKeyDecoders.registerOrGetExisting(keyType);
+        return GenericsHelper.createParameterizedType(new Type[]{keyType, valueType}, null, clazz);
+    }
+    if (implClazz != null) {
+        if (typeArgs.length == 0) {
+            return implClazz;
+        } else {
+            return GenericsHelper.createParameterizedType(typeArgs, null, implClazz);
+        }
+    }
+    return type;
+}
+```
+</details>
+<details><summary>After</summary>
+
+```Java
+private static Type handleCollection(Type[] typeArgs, Class clazz) {
+    Type compType = Object.class;
+    if (typeArgs.length == 0) {
+        // default to List<Object>
+    } else if (typeArgs.length == 1) {
+        compType = typeArgs[0];
+    } else {
+        throw new IllegalArgumentException(
+                "can not bind to generic collection without argument types, " +
+                        "try syntax like TypeLiteral<List<Integer>>{}");
+    }
+    Class implClazz = JsoniterSpi.getTypeImplementation(clazz);
+    if (clazz == List.class) {
+        clazz = implClazz == null ? ArrayList.class : implClazz;
+    } else if (clazz == Set.class) {
+        clazz = implClazz == null ? HashSet.class : implClazz;
+    }
+    return GenericsHelper.createParameterizedType(new Type[]{compType}, null, clazz);
+}
+
+private static Type handleMap(Type[] typeArgs, Class clazz) {
+    Type keyType = String.class;
+    Type valueType = Object.class;
+    if (typeArgs.length == 0) {
+        // default to Map<String, Object>
+    } else if (typeArgs.length == 2) {
+        keyType = typeArgs[0];
+        valueType = typeArgs[1];
+    } else {
+        throw new IllegalArgumentException(
+                "can not bind to generic collection without argument types, " +
+                        "try syntax like TypeLiteral<Map<String, String>>{}");
+    }
+    if (clazz == Map.class) {
+        Class implClazz = JsoniterSpi.getTypeImplementation(clazz);
+        clazz = implClazz == null ? HashMap.class : implClazz;
+    }
+    if (keyType == Object.class) {
+        keyType = String.class;
+    }
+    MapKeyDecoders.registerOrGetExisting(keyType);
+    return GenericsHelper.createParameterizedType(new Type[]{keyType, valueType}, null, clazz);
+}
+
+private static Type chooseImpl(Type type) {
+    Type[] typeArgs = new Type[0];
+    Class clazz;
+    if (type instanceof ParameterizedType) {
+        ParameterizedType pType = (ParameterizedType) type;
+        clazz = (Class) pType.getRawType();
+        typeArgs = pType.getActualTypeArguments();
+    } else if (type instanceof WildcardType) {
+        return Object.class;
+    } else {
+        clazz = (Class) type;
+    }
+    if (Collection.class.isAssignableFrom(clazz)) {
+        return handleCollection(typeArgs, clazz);
+    }
+    if (Map.class.isAssignableFrom(clazz)) {
+        return handleMap(typeArgs, clazz);
+    }
+    Class implClazz = JsoniterSpi.getTypeImplementation(clazz);
+    if (implClazz != null) {
+        if (typeArgs.length == 0) {
+            return implClazz;
+        } else {
+            return GenericsHelper.createParameterizedType(typeArgs, null, implClazz);
+        }
+    }
+    return type;
+}
+```
+</details>
+
 ## Coverage
 
 ### Tools
