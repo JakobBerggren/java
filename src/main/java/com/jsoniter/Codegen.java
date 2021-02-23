@@ -2,8 +2,11 @@ package com.jsoniter;
 
 import com.jsoniter.spi.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.ParameterizedType;
@@ -122,64 +125,115 @@ class Codegen {
     }
 
     private static Type chooseImpl(Type type) {
+        try {
+
+        Scanner sc = new Scanner(new FileReader("./coverage/chooseImpl.txt"));
+        int[] coverage = new int[18]; //18 is CCN
+        int iii = 0;
+        sc.useDelimiter(", |\\[|\\]");
+        while(sc.hasNextInt()){
+            coverage[iii] = sc.nextInt();
+            iii++;
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./coverage/chooseImpl.txt"));
+        
+
+        
+
+        coverage[0] = 1;
+
         Type[] typeArgs = new Type[0];
         Class clazz;
         if (type instanceof ParameterizedType) {
+            coverage[1] = 1;
             ParameterizedType pType = (ParameterizedType) type;
             clazz = (Class) pType.getRawType();
             typeArgs = pType.getActualTypeArguments();
         } else if (type instanceof WildcardType) {
+            coverage[2] = 1;
+            writer.write(Arrays.toString(coverage));
+            writer.close();
             return Object.class;
         } else {
             clazz = (Class) type;
         }
         Class implClazz = JsoniterSpi.getTypeImplementation(clazz);
         if (Collection.class.isAssignableFrom(clazz)) {
+            coverage[3] = 1;
             Type compType = Object.class;
             if (typeArgs.length == 0) {
+                coverage[4] = 1;
                 // default to List<Object>
             } else if (typeArgs.length == 1) {
+                coverage[5] = 1;
                 compType = typeArgs[0];
             } else {
+                writer.write(Arrays.toString(coverage));
+                writer.close();
                 throw new IllegalArgumentException(
                         "can not bind to generic collection without argument types, " +
                                 "try syntax like TypeLiteral<List<Integer>>{}");
             }
             if (clazz == List.class) {
+                coverage[6] = 1;
                 clazz = implClazz == null ? ArrayList.class : implClazz;
             } else if (clazz == Set.class) {
+                coverage[7] = 1;
                 clazz = implClazz == null ? HashSet.class : implClazz;
             }
+            writer.write(Arrays.toString(coverage));
+            writer.close();
             return GenericsHelper.createParameterizedType(new Type[]{compType}, null, clazz);
         }
         if (Map.class.isAssignableFrom(clazz)) {
+            coverage[8] = 1;
             Type keyType = String.class;
             Type valueType = Object.class;
             if (typeArgs.length == 0) {
+                coverage[9] = 1;
                 // default to Map<String, Object>
             } else if (typeArgs.length == 2) {
+                coverage[10] = 1;
                 keyType = typeArgs[0];
                 valueType = typeArgs[1];
             } else {
+                writer.write(Arrays.toString(coverage));
+                writer.close();
                 throw new IllegalArgumentException(
                         "can not bind to generic collection without argument types, " +
                                 "try syntax like TypeLiteral<Map<String, String>>{}");
             }
             if (clazz == Map.class) {
+                coverage[11] = 1;
                 clazz = implClazz == null ? HashMap.class : implClazz;
             }
             if (keyType == Object.class) {
+                coverage[12] = 1;
                 keyType = String.class;
             }
             MapKeyDecoders.registerOrGetExisting(keyType);
+            writer.write(Arrays.toString(coverage));
+            writer.close();
             return GenericsHelper.createParameterizedType(new Type[]{keyType, valueType}, null, clazz);
         }
         if (implClazz != null) {
+            coverage[13] = 1;
             if (typeArgs.length == 0) {
+                coverage[14] = 1;
+                writer.write(Arrays.toString(coverage));
+                writer.close();
                 return implClazz;
             } else {
+                writer.write(Arrays.toString(coverage));
+                writer.close();
                 return GenericsHelper.createParameterizedType(typeArgs, null, implClazz);
             }
+        }
+        writer.write(Arrays.toString(coverage));
+        writer.close();
+        } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
         }
         return type;
     }

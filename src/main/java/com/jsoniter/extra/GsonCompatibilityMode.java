@@ -15,15 +15,20 @@ import com.jsoniter.annotation.JsonProperty;
 import com.jsoniter.output.JsonStream;
 import com.jsoniter.spi.*;
 
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.Set;
 
 public class GsonCompatibilityMode extends Config {
@@ -446,49 +451,86 @@ public class GsonCompatibilityMode extends Config {
 
     @Override
     public void updateClassDescriptor(ClassDescriptor desc) {
+        // INITIALIZE SAVING TO FILE
+        Scanner sc;
+        try {
+        sc = new Scanner(new FileReader("./coverage/updateClassDescriptor.txt"));
+        int[] coverage = new int[16]; //16 is CCN
+        int iii = 0;
+        sc.useDelimiter(", |\\[|\\]");
+        while(sc.hasNextInt()){
+            coverage[iii] = sc.nextInt();
+            iii++;
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./coverage/updateClassDescriptor.txt"));
+
+        coverage[0] = 1;
+        
         FieldNamingStrategy fieldNamingStrategy = builder().fieldNamingStrategy;
         for (Binding binding : desc.allBindings()) {
+            coverage[1] = 1;
             if (binding.method != null) {
+                coverage[2] = 1;
                 binding.toNames = new String[0];
                 binding.fromNames = new String[0];
             }
             if (fieldNamingStrategy != null && binding.field != null) {
+                coverage[3] = 1;
+                coverage[4] = 1;
                 String translated = fieldNamingStrategy.translateName(binding.field);
                 binding.toNames = new String[]{translated};
                 binding.fromNames = new String[]{translated};
             }
             if (builder().version != null) {
+                coverage[5] = 1;
                 Since since = binding.getAnnotation(Since.class);
                 if (since != null && builder().version < since.value()) {
+                    coverage[6] = 1;
+                    coverage[7] = 1;
                     binding.toNames = new String[0];
                     binding.fromNames = new String[0];
                 }
                 Until until = binding.getAnnotation(Until.class);
                 if (until != null && builder().version >= until.value()) {
+                    coverage[8] = 1;
+                    coverage[9] = 1;
                     binding.toNames = new String[0];
                     binding.fromNames = new String[0];
                 }
             }
             for (ExclusionStrategy strategy : builder().serializationExclusionStrategies) {
+                coverage[10] = 1;
                 if (strategy.shouldSkipClass(binding.clazz)) {
+                    coverage[11] = 1;
                     binding.toNames = new String[0];
                     continue;
                 }
                 if (strategy.shouldSkipField(new FieldAttributes(binding.field))) {
+                    coverage[12] = 1;
                     binding.toNames = new String[0];
                 }
             }
             for (ExclusionStrategy strategy : builder().deserializationExclusionStrategies) {
+                coverage[13] = 1;
                 if (strategy.shouldSkipClass(binding.clazz)) {
+                    coverage[14] = 1;
                     binding.fromNames = new String[0];
                     continue;
                 }
                 if (strategy.shouldSkipField(new FieldAttributes(binding.field))) {
+                    coverage[15] = 1;
                     binding.fromNames = new String[0];
                 }
             }
         }
         super.updateClassDescriptor(desc);
+
+        writer.write(Arrays.toString(coverage));
+        writer.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override

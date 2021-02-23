@@ -4,8 +4,12 @@ import com.jsoniter.JsonIterator;
 import com.jsoniter.spi.Slice;
 import com.jsoniter.output.JsonStream;
 
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /** A very fast and memory efficient class to encode and decode to and from BASE64 in full accordance
  * with RFC 2045.<br><br>
@@ -200,21 +204,43 @@ abstract class Base64 {
 
     private final static byte[] EMPTY_ARRAY = new byte[0];
 
-    static byte[] decodeFast(final byte[] sArr, final int start, final int end) {
+    static byte[] decodeFast(final byte[] sArr, final int start, final int end){
+        byte[] dArr = {};
+        try {
+        //INITIALIZE SAVING TO FILE
+        Scanner sc = new Scanner(new FileReader("./coverage/decodeFast.txt"));
+        int[] coverage = new int[16]; //16 is CCN
+        int iii = 0;
+        sc.useDelimiter(", |\\[|\\]");
+        while(sc.hasNextInt()){
+            coverage[iii] = sc.nextInt();
+            iii++;
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./coverage/decodeFast.txt"));
+
+        coverage[0] = 1;
         // Check special case
         int sLen = end - start;
-        if (sLen == 0)
+        if (sLen == 0){
+            coverage[1] = 1;
             return EMPTY_ARRAY;
+        }
 
         int sIx = start, eIx = end - 1;    // Start and end index after trimming.
 
         // Trim illegal chars from start
-        while (sIx < eIx && IA[sArr[sIx] & 0xff] < 0)
+        while (sIx < eIx && IA[sArr[sIx] & 0xff] < 0){
             sIx++;
+            coverage[2] = 1;
+            coverage[3] = 1;
+        }
 
         // Trim illegal chars from end
-        while (eIx > 0 && IA[sArr[eIx] & 0xff] < 0)
+        while (eIx > 0 && IA[sArr[eIx] & 0xff] < 0){
             eIx--;
+            coverage[4] = 1;
+            coverage[5] = 1;
+        }
 
         // get the padding count (=) (0, 1 or 2)
         int pad = sArr[eIx] == '=' ? (sArr[eIx - 1] == '=' ? 2 : 1) : 0;  // Count '=' at end.
@@ -222,11 +248,12 @@ abstract class Base64 {
         int sepCnt = sLen > 76 ? (sArr[76] == '\r' ? cCnt / 78 : 0) << 1 : 0;
 
         int len = ((cCnt - sepCnt) * 6 >> 3) - pad; // The number of decoded bytes
-        byte[] dArr = new byte[len];       // Preallocate byte[] of exact length
+        dArr = new byte[len];       // Preallocate byte[] of exact length
 
         // Decode all but the last 0 - 2 bytes.
         int d = 0;
         for (int cc = 0, eLen = (len / 3) * 3; d < eLen;) {
+            coverage[6] = 1;
             // Assemble three bytes into an int from four "valid" characters.
             int i = IA[sArr[sIx++]] << 18 | IA[sArr[sIx++]] << 12 | IA[sArr[sIx++]] << 6 | IA[sArr[sIx++]];
 
@@ -237,19 +264,33 @@ abstract class Base64 {
 
             // If line separator, jump over it.
             if (sepCnt > 0 && ++cc == 19) {
+                coverage[7] = 1;
+                coverage[8] = 1;
                 sIx += 2;
                 cc = 0;
             }
         }
 
         if (d < len) {
+            coverage[9] = 1;
             // Decode last 1-3 bytes (incl '=') into 1-3 bytes
             int i = 0;
-            for (int j = 0; sIx <= eIx - pad; j++)
+            for (int j = 0; sIx <= eIx - pad; j++){
+                coverage[10] = 1;
                 i |= IA[sArr[sIx++]] << (18 - j * 6);
+            }
 
-            for (int r = 16; d < len; r -= 8)
+            for (int r = 16; d < len; r -= 8){
+                coverage[11] = 1;
                 dArr[d++] = (byte) (i >> r);
+            }
+        }
+
+            writer.write(Arrays.toString(coverage));
+            writer.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
         return dArr;
