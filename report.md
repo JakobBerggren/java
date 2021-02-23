@@ -588,8 +588,8 @@ Where is potential for improvement?
 
 <Is there something special you want to mention here?>
 
-Throughout this assignment we have really come to understand the importance of ensuring a nice on-boarding experience, utilizing good testing, and most importantly providing good documentation. This project has not delivered on any of the previously mentioned properties, and after this assignment we have really come to appriciate the projects that do.
+Throughout this assignment we have really come to understand the importance of ensuring a nice on-boarding experience, utilizing good testing, and most importantly providing good documentation. This project has not delivered on any of the previously mentioned properties, and after this assignment we have really come to appreciate the projects that do.
 
-We were all new to the concept of *cyclomatic complexity* and we have learnt a great deal about it. Firstly, we now know what it is, how to identify it, and how to counteract it. Secondly we also learnt that it *can* be a good indicator of complicated code/functions but a function with high cyclomatic complexity does not have to be complex/hard to read.
+We were all new to the concept of *cyclomatic complexity* and we have learnt a great deal about it. Firstly, we now know what it is, how to identify it, and how to counteract it. Secondly we also learnt that it *can* be a good indicator of complicated code/functions but that a function with high cyclomatic complexity does not neccessarily have to be complex/hard to read.
 
 
