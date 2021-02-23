@@ -50,8 +50,8 @@ The onboarding experience up to this point was all but well-documented, but felt
    | 60   | 18  | 391   | 1     | 62     | 18, 18      | Caroline, Niklas | chooseImpl() [124-185] in Codegen.java = 18                     |
    | 68   | 16  | 467   | 1     | 68     |             |           | decode_() [271-338] in ReflectionObjectDecoder.java             |
    | 55   | 16  | 406   | 2     | 55     |             |           | getDecodingClassDescriptor() [27-81] in ClassDescriptor.java    |
-   | 45   | 16  | 362   | 1     | 45     | 16          | E-Joon Ko | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
-   | 73   | 23  | 527   | 2     | 77     | 23          | Caroline  | genReadOp() [195-271] in CodegenImplNative.java                 |
+   | 45   | 16  | 362   | 1     | 45     | 16, 16      | E-Joon Ko, Jakob | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
+   | 73   | 23  | 527   | 2     | 77     | 23, 23      | Caroline, Jakob  | genReadOp() [195-271] in CodegenImplNative.java                 |
    | 84   | 17  | 576   | 2     | 88     |             |           | createEncoder() [245-332] in GsonCompatibilityMode.java         |
    | 97   | 17  | 735   | 1     | 104    |             |           | genObjectUsingHash() [10-113] in CodegenImplObjectHash.java     |
 2. Are the functions just complex, or also long?
