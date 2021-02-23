@@ -671,9 +671,9 @@ Since this is a private function, It can't be called it directly. But there is n
 
 Show the comments that describe the requirements for the coverage.
 
-Report of old coverage: https://drive.google.com/drive/folders/1eAlBSAe6ZdBm8pQL05rD5rM1t1y22aC6?usp=sharing
+[Report of old coverage](https://drive.google.com/drive/folders/1eAlBSAe6ZdBm8pQL05rD5rM1t1y22aC6?usp=sharing)
 
-Report of new coverage: https://drive.google.com/drive/folders/1OA8LATTObE65CGeYDD6LDyvw9kEWZoAs?usp=sharing
+[Report of new coverage](https://drive.google.com/drive/folders/1OA8LATTObE65CGeYDD6LDyvw9kEWZoAs?usp=sharing)
 
 Test cases added:
 
