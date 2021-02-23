@@ -1,7 +1,7 @@
 # Report for assignment 3 Group 19
 
 This is the report markdown file of assignment 3 by Group 19. The members for this group assignment are:
-E-Joon Ko, Agnes Forsberg, Niklas Tomsic, and Jakob Berggren.
+E-Joon Ko, Niklas Tomsic, Caroline Borg, and Jakob Berggren.
 
 ## Project
 
