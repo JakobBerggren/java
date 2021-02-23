@@ -664,6 +664,11 @@ and exceptions, if available in your language?
 
 ## Coverage improvement
 
+### chooseImpl
+chooseImpl is a very well-covered method with only three uncovered branches despite a high CCN. Two of these are when the program attempts to parse a Collection or Map derivative with an unexpected amount of generic parameters.
+
+Since this is a private function, It can't be called it directly. But there is no need to add any additional interfaces since the method is called early on in the process.
+
 Show the comments that describe the requirements for the coverage.
 
 Report of old coverage: [link]
@@ -678,16 +683,42 @@ Number of test cases added: two per team member (P) or at least four (P+).
 
 ## Self-assessment: Way of working
 
-Current state according to the Essence standard: ...
+From evaluating the checklist and discussing amongst ourselves, most of the group members found our way of working to be
+somewhat between “In Use” and “In Place”. Ever since we recently finished our third assignment, our group has felt that
+we all had a good understanding of the tools and practices available to us. We also felt that each of our involvements
+in the project so far has been significant and meaningful. Our frequent meetings have allowed us to practice effective
+delegation of tasks and have allowed for a good amount of cooperation between the group members.
 
-Was the self-assessment unanimous? Any doubts about certain items?
+The group discussion about the checklist was interesting as some of the members felt that the group should belong in
+the “In Use” category, while others felt that the group belonged in the “In Place” category. The reasoning for both
+claims were interesting. Those who claimed that the group fit in the “In Place” category argued that because of the
+current pandemic situation as well as the differing schedules between the group members, it made it harder for the group
+to cooperate more frequently and effectively. This was made all the more difficult when just before the start of the third
+assignment, a previous group member left our group due to personal reasons. Losing a group member definitely made this
+assignment more challenging. However, the otherside of the group argued that despite our smaller group number as well as
+the difficult circumstances with the pandemic and differing schedules, the group being able to work and finish the task
+in an organized manner was impressive enough to justify being in the “In Place” category.
 
-How have you improved so far?
+Our main obstacle for reaching the next state would be to improve our involvement more, as the differing schedules made
+it difficult for the group to meet together with every single group member present. This often made it so that the group
+members who were too busy to attend the meeting would find it harder to involve themselves in the project and find it
+harder to understand the tasks for the project.
 
-Where is potential for improvement?
+Therefore, the biggest improvement that the group made in the way of working was by increasing every member's
+involvement ever since the end of assignment 2. Assignment 2 exposed the vulnerability of cooperating too little
+and having meetings too infrequently, as this made it difficult for the group members to find themselves on the same
+page and share knowledge. The lack of involvement in the end prevented us from passing the first presentation, which
+resulted in extra work just to receive a passing grade.
+
 
 ## Overall experience
 
-What are your main take-aways from this project? What did you learn?
+<What are your main take-aways from this project? What did you learn?>
 
-Is there something special you want to mention here?
+<Is there something special you want to mention here?>
+
+Throughout this assignment we have really come to understand the importance of ensuring a nice on-boarding experience, utilizing good testing, and most importantly providing good documentation. This project has not delivered on any of the previously mentioned properties, and after this assignment we have really come to appreciate the projects that do.
+
+We were all new to the concept of *cyclomatic complexity* and we have learnt a great deal about it. Firstly, we now know what it is, how to identify it, and how to counteract it. Secondly we also learnt that it *can* be a good indicator of complicated code/functions but that a function with high cyclomatic complexity does not neccessarily have to be complex/hard to read.
+
+
