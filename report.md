@@ -536,7 +536,8 @@ Coverage tool results:
 and exceptions, if available in your language?
     *   The quality of our coverage is decent but for sure limited. Since we have taken an approach of updating an array
     data structure each time a specific branch has been reached, it cannot take into account ternary operations or 
-    multiple if cases in one line effectively.
+    multiple if cases in one line effectively. The use of a binary flag also makes it unable to detect whether a lone if-statement's
+    branch is taken always or just once. If the flag is set we can't know whether the implicit else-branch has been taken.
     
 
 2. What are the limitations of your tool? How would the instrumentation change if you modify the program?
