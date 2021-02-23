@@ -200,6 +200,14 @@ abstract class Base64 {
 
     private final static byte[] EMPTY_ARRAY = new byte[0];
 
+    public static int getPad(byte[] sArr, int eIx) {
+        return sArr[eIx] == '=' ? (sArr[eIx - 1] == '=' ? 2 : 1) : 0;
+    }
+
+    public static int getSepCnt(byte[] sArr, int sLen, int cCnt) {
+        return sLen > 76 ? (sArr[76] == '\r' ? cCnt / 78 : 0) << 1 : 0;
+    }
+
     static byte[] decodeFast(final byte[] sArr, final int start, final int end) {
         // Check special case
         int sLen = end - start;
@@ -217,9 +225,9 @@ abstract class Base64 {
             eIx--;
 
         // get the padding count (=) (0, 1 or 2)
-        int pad = sArr[eIx] == '=' ? (sArr[eIx - 1] == '=' ? 2 : 1) : 0;  // Count '=' at end.
+        int pad = getPad(sArr, eIx);
         int cCnt = eIx - sIx + 1;   // Content count including possible separators
-        int sepCnt = sLen > 76 ? (sArr[76] == '\r' ? cCnt / 78 : 0) << 1 : 0;
+        int sepCnt = getSepCnt(sArr, sLen, cCnt);
 
         int len = ((cCnt - sepCnt) * 6 >> 3) - pad; // The number of decoded bytes
         byte[] dArr = new byte[len];       // Preallocate byte[] of exact length
