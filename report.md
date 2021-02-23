@@ -555,6 +555,11 @@ and exceptions, if available in your language?
 
 ## Coverage improvement
 
+### chooseImpl
+chooseImpl is a very well-covered method with only three uncovered branches despite a high CCN. Two of these are when the program attempts to parse a Collection or Map derivative with an unexpected amount of generic parameters.
+
+Since this is a private function, It can't be called it directly. But there is no need to add any additional interfaces since the method is called early on in the process.
+
 Show the comments that describe the requirements for the coverage.
 
 Report of old coverage: [link]
@@ -599,6 +604,12 @@ resulted in extra work just to receive a passing grade.
 
 ## Overall experience
 
-What are your main take-aways from this project? What did you learn?
+<What are your main take-aways from this project? What did you learn?>
 
-Is there something special you want to mention here?
+<Is there something special you want to mention here?>
+
+Throughout this assignment we have really come to understand the importance of ensuring a nice on-boarding experience, utilizing good testing, and most importantly providing good documentation. This project has not delivered on any of the previously mentioned properties, and after this assignment we have really come to appreciate the projects that do.
+
+We were all new to the concept of *cyclomatic complexity* and we have learnt a great deal about it. Firstly, we now know what it is, how to identify it, and how to counteract it. Secondly we also learnt that it *can* be a good indicator of complicated code/functions but that a function with high cyclomatic complexity does not neccessarily have to be complex/hard to read.
+
+
