@@ -254,21 +254,27 @@ Coverage tool results:
 | 0.889      | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
 | 0.391      | genReadOp() [195-271] in CodegenImplNative.java                 |
 
-The patch is probably too long to be copied here, so please add
-the git command that is used to obtain the patch instead:
+###Evaluation
 
-git diff ...
+1. What is the quality of your own coverage measurement? Does it take into account ternary operators(condition ? yes : no)
+and exceptions, if available in your language?
+    *   The quality of our coverage is decent but for sure limited. Since we have taken an approach of updating an array
+    data structure each time a specific branch has been reached, it cannot take into account ternary operations or 
+    multiple if cases in one line effectively.
+    
 
-What kinds of constructs does your tool support, and how accurate is
-its output?
+2. What are the limitations of your tool? How would the instrumentation change if you modify the program?
+    *   Our first limitation is as mentioned above not being able to accurately provide coverage to ternary operations or
+    multiple if cases in one line. Another limitation with our tool is that our coverage is for the most part hardcoded,
+    so using our manual coverage tool on another function other than the four functions in the table will require more
+    manual labor from the group. This work would also apply to any updates made in the function, as the "flag" locations
+    would also have to be manually updated.    
 
-### Evaluation
 
-1. How detailed is your coverage measurement?
-
-2. What are the limitations of your own tool?
-
-3. Are the results of your tool consistent with existing coverage tools?
+3. If you have an automated tool, are your results consistent with the ones produced by existing tool(s)?
+    *   We can't say for sure. However the results from our manual coverage was quiet different from another existing
+        code coverage tool called Codecov, in which updateClassDescriptor() was given a lot coverage score by Codecov,
+        while our manual tool determined that the function had a high coverage % of 0.889.
 
 ## Coverage improvement
 
