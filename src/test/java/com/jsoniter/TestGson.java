@@ -183,6 +183,36 @@ public class TestGson extends TestCase {
         assertEquals("", obj.field4);
     }
 
+    public void test_addDeserializationExclusionStrategyClass() {
+        ExclusionStrategy exclusionStrategy = new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return !f.getName().equals("field3");
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return true;
+            }
+        };
+        Gson gson = new GsonBuilder()
+                .addDeserializationExclusionStrategy(exclusionStrategy)
+                .create();
+        TestObject5 obj = gson.fromJson("{\"field1\":\"field1\",\"field2\":\"field2\",\"field3\":\"field3\",\"field4\":\"field4\"}",
+                TestObject5.class);
+        assertNull(obj);
+
+        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder()
+                .addDeserializationExclusionStrategy(exclusionStrategy)
+                .build();
+        obj = JsonIterator.deserialize(config, "{\"field1\":\"field1\",\"field2\":\"field2\",\"field3\":\"field3\",\"field4\":\"field4\"}",
+                TestObject5.class);
+        assertEquals("", obj.field1);
+        assertEquals("", obj.field2);
+        assertEquals("", obj.field3);
+        assertEquals("", obj.field4);
+    }
+
     public void test_int_as_string() {
         Gson gson = new Gson();
         String str = gson.fromJson("1.1", String.class);
