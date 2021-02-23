@@ -80,6 +80,107 @@ Carried out refactoring (optional, P+):
 
 git diff ...
 
+### Base64::decodeFast, CCN = 16
+
+Base64::decodeFast is a function used to decode a byte array given a starting point and an ending point. The function
+consists of many small while loops, for loops, and if statements which all accumulate to a Cyclomatic Complexity score of 16.
+The biggest contributors in decodeFast() are the 2 ternary double if operators, which together results in CCN = 4. Therefore, our group member E-Joon Ko
+decided to create 2 new functions getPad() and getSepCnt() which both returns a int, since both ternary operators
+were being used to assign a value to an int variable.
+
+<details><summary>Before</summary>
+
+```Java
+    static byte[] decodeFast(final byte[] sArr, final int start, final int end) {
+        // Check special case
+        int sLen = end - start;
+
+        // get the padding count (=) (0, 1 or 2)
+        int pad = sArr[eIx] == '=' ? (sArr[eIx - 1] == '=' ? 2 : 1) : 0;  // Count '=' at end.
+        int cCnt = eIx - sIx + 1;   // Content count including possible separators
+        int sepCnt = sLen > 76 ? (sArr[76] == '\r' ? cCnt / 78 : 0) << 1 : 0;
+
+        int len = ((cCnt - sepCnt) * 6 >> 3) - pad; // The number of decoded bytes
+        byte[] dArr = new byte[len];       // Preallocate byte[] of exact length
+        // Decode all but the last 0 - 2 bytes.
+        int d = 0;
+        for (int cc = 0, eLen = (len / 3) * 3; d < eLen;) {
+            // Assemble three bytes into an int from four "valid" characters.
+            int i = IA[sArr[sIx++]] << 18 | IA[sArr[sIx++]] << 12 | IA[sArr[sIx++]] << 6 | IA[sArr[sIx++]];
+            // Add the bytes
+            dArr[d++] = (byte) (i >> 16);
+            dArr[d++] = (byte) (i >> 8);
+            dArr[d++] = (byte) i;
+            // If line separator, jump over it.
+            if (sepCnt > 0 && ++cc == 19) {
+                sIx += 2;
+                cc = 0;
+            }
+        }
+        if (d < len) {
+            // Decode last 1-3 bytes (incl '=') into 1-3 bytes
+            int i = 0;
+            for (int j = 0; sIx <= eIx - pad; j++)
+                i |= IA[sArr[sIx++]] << (18 - j * 6);
+            for (int r = 16; d < len; r -= 8)
+                dArr[d++] = (byte) (i >> r);
+        }
+        return dArr;
+    }
+}
+```
+</details>
+<details><summary>After</summary>
+
+```Java
+    public static int getPad(byte[] sArr, int eIx) {
+        return sArr[eIx] == '=' ? (sArr[eIx - 1] == '=' ? 2 : 1) : 0;
+    }
+
+    public static int getSepCnt(byte[] sArr, int sLen, int cCnt) {
+        return sLen > 76 ? (sArr[76] == '\r' ? cCnt / 78 : 0) << 1 : 0;
+    }
+
+    static byte[] decodeFast(final byte[] sArr, final int start, final int end) {
+        // Check special case
+        int sLen = end - start;
+
+        // get the padding count (=) (0, 1 or 2)
+        int pad = getPad(sArr, eIx);
+        int cCnt = eIx - sIx + 1;   // Content count including possible separators
+        int sepCnt = getSepCnt(sArr, sLen, cCnt);
+
+        int len = ((cCnt - sepCnt) * 6 >> 3) - pad; // The number of decoded bytes
+        byte[] dArr = new byte[len];       // Preallocate byte[] of exact length
+        // Decode all but the last 0 - 2 bytes.
+        int d = 0;
+        for (int cc = 0, eLen = (len / 3) * 3; d < eLen;) {
+            // Assemble three bytes into an int from four "valid" characters.
+            int i = IA[sArr[sIx++]] << 18 | IA[sArr[sIx++]] << 12 | IA[sArr[sIx++]] << 6 | IA[sArr[sIx++]];
+            // Add the bytes
+            dArr[d++] = (byte) (i >> 16);
+            dArr[d++] = (byte) (i >> 8);
+            dArr[d++] = (byte) i;
+            // If line separator, jump over it.
+            if (sepCnt > 0 && ++cc == 19) {
+                sIx += 2;
+                cc = 0;
+            }
+        }
+        if (d < len) {
+            // Decode last 1-3 bytes (incl '=') into 1-3 bytes
+            int i = 0;
+            for (int j = 0; sIx <= eIx - pad; j++)
+                i |= IA[sArr[sIx++]] << (18 - j * 6);
+            for (int r = 16; d < len; r -= 8)
+                dArr[d++] = (byte) (i >> r);
+        }
+        return dArr;
+    }
+}
+```
+</details>
+
 ### Codegen::chooseImpl, CCN = 18
 
 Codegen::chooseImpl is used to pick the "proper implementation" to instantiate the object if the type bound to is an interface. The function consists of four consecutive if-statements of varying internal complexity. One is very simple, one is simple, and two are complex. The complex ones have, according to lizard, CCNs of 6 and 7, making them the heavy-hitters of this function. Luckily, they both follow the pattern: "if X, then do Y, eventually either throw an exception or return a value". With few function-local values used, the bodies of these if-statements can be easily lifted into separate functions. This reduces the CCN of the chooseImpl-function to 7 and opens up the possibility for easier testing of these two cases. The clearest draw-back of refactoring this function is that it is old and stable code. When, or if, need should arise, then refactoring should be done then and there instead of here and now. Time could be better spent elsewhere instead of refactoring old code unneccessarily. 
