@@ -10,9 +10,7 @@ import com.jsoniter.spi.JsonException;
 import junit.framework.TestCase;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TestAnnotationJsonProperty extends TestCase {
 
@@ -182,6 +180,40 @@ public class TestAnnotationJsonProperty extends TestCase {
         String input = "{\"hello\":100}";
         TestObject11 obj = JsonIterator.deserialize(input, TestObject11.class);
         assertEquals(100, obj.field);
+    }
+
+    public static interface IMultipleGenericsCollection<S, T> extends Collection<T> {}
+
+    public static class TestObject12 {
+        @JsonProperty(implementation = IMultipleGenericsCollection.class)
+        public IMultipleGenericsCollection<Integer, Integer> values;
+    }
+
+    public void test_read_invalid_collection_interface() {
+        JsonIterator iter = JsonIterator.parse("");
+        try {
+            TestObject12 obj = iter.read(TestObject12.class);
+        } catch (Exception e) {
+            return;
+        }
+        fail();
+    }
+
+    public static interface IMultipleGenericsMap<S, T, U> extends Map<S, T> {}
+
+    public static class TestObject13 {
+        @JsonProperty(implementation = IMultipleGenericsMap.class)
+        public IMultipleGenericsMap<Integer, Integer, Integer> values;
+    }
+
+    public void test_read_invalid_map_interface() {
+        JsonIterator iter = JsonIterator.parse("");
+        try {
+            TestObject13 obj = iter.read(TestObject13.class);
+        } catch (Exception e) {
+            return;
+        }
+        fail();
     }
 
 }
