@@ -243,6 +243,17 @@ integrate it with your build environment?
 Show a patch (or link to a branch) that shows the instrumented code to
 gather coverage measurements.
 
+Coverage tool branch link: https://github.com/JakobBerggren/java/tree/ManualCodeCoverage
+
+Coverage tool results:
+
+| Coverage % | location                                                        |
+|------------|-----------------------------------------------------------------|
+| 0.125      | decodeFast() [203-256] in Base64.java                           |
+| 0.722      | chooseImpl() [124-185] in Codegen.java = 18                     |
+| 0.889      | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
+| 0.391      | genReadOp() [195-271] in CodegenImplNative.java                 |
+
 The patch is probably too long to be copied here, so please add
 the git command that is used to obtain the patch instead:
 
