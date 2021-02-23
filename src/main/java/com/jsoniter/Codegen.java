@@ -211,9 +211,9 @@ class Codegen {
                 coverage[12] = 1;
                 keyType = String.class;
             }
-            MapKeyDecoders.registerOrGetExisting(keyType);
             writer.write(Arrays.toString(coverage));
             writer.close();
+            MapKeyDecoders.registerOrGetExisting(keyType);
             return GenericsHelper.createParameterizedType(new Type[]{keyType, valueType}, null, clazz);
         }
         if (implClazz != null) {
