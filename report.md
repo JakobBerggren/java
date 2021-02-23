@@ -44,7 +44,7 @@ The onboarding experience up to this point was all but well-documented, but felt
 1. What are your results for eight complex functions?
 
 
-   | NLOC | CCN | token | PARAM | length | CCN by hand | Member    | location                                                        |
+   | NLOC | CCN | token | PARAM | length | CCN by hand | Member    | location (Masters branch)                                                        |
    |------|-----|-------|-------|--------|-------------|-----------|-----------------------------------------------------------------|
    | 34   | 16  | 403   | 0     | 54     | 16, 16      | E-Joon Ko, Niklas | decodeFast() [203-256] in Base64.java                   |
    | 60   | 18  | 391   | 1     | 62     | 18, 18      | Caroline, Niklas | chooseImpl() [124-185] in Codegen.java                   |
@@ -525,10 +525,10 @@ Coverage tool results:
 
 | Coverage % | location                                                        |
 |------------|-----------------------------------------------------------------|
-| 0.125      | decodeFast() [203-256] in Base64.java                           |
-| 0.722      | chooseImpl() [124-185] in Codegen.java                          |
-| 0.889      | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
-| 0.391      | genReadOp() [195-271] in CodegenImplNative.java                 |
+| 0.125      | decodeFast() in Base64.java                           |
+| 0.722      | chooseImpl() in Codegen.java                          |
+| 0.889      | updateClassDescriptor() in GsonCompatibilityMode.java |
+| 0.391      | genReadOp() in CodegenImplNative.java                 |
 
 ### Evaluation
 
