@@ -254,7 +254,7 @@ Coverage tool results:
 | 0.889      | updateClassDescriptor() [448-492] in GsonCompatibilityMode.java |
 | 0.391      | genReadOp() [195-271] in CodegenImplNative.java                 |
 
-###Evaluation
+### Evaluation
 
 1. What is the quality of your own coverage measurement? Does it take into account ternary operators(condition ? yes : no)
 and exceptions, if available in your language?
