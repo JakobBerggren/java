@@ -9,7 +9,7 @@ Name: Jsoniter
 
 URL: https://github.com/json-iterator/java
 
-jsoniter (json-iterator) is fast and flexible JSON parser available in Java and Go. Good deal of the code is ported
+jsoniter (json-iterator) is a fast and flexible JSON parser available in Java and Go. A good deal of the code is ported
 from dsljson, and jsonparser.
 
 ## Onboarding experience
