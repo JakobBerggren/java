@@ -330,6 +330,181 @@ private static Type chooseImpl(Type type) {
 ```
 </details>
 
+### CodegenImplNative::genReadOp, CCN = 23
+
+alosdhasodhöasdadasödasdgasdhsajdajsökdh
+
+<details> <summary> Before </summary>
+
+```Java
+private static String genReadOp(String cacheKey, Type valueType) {
+        // the field decoder might be registered directly
+        Decoder decoder = JsoniterSpi.getDecoder(cacheKey);
+        if (decoder == null) {
+            // if cache key is for field, and there is no field decoder specified
+            // update cache key for normal type
+            cacheKey = TypeLiteral.create(valueType).getDecoderCacheKey();
+            decoder = JsoniterSpi.getDecoder(cacheKey);
+            if (decoder == null) {
+                if (valueType instanceof Class) {
+                    Class clazz = (Class) valueType;
+                    String nativeRead = NATIVE_READS.get(clazz.getCanonicalName());
+                    if (nativeRead != null) {
+                        return nativeRead;
+                    }
+                } else if (valueType instanceof WildcardType) {
+                    return NATIVE_READS.get(Object.class.getCanonicalName());
+                }
+                Codegen.getDecoder(cacheKey, valueType);
+                if (Codegen.canStaticAccess(cacheKey)) {
+                    return String.format("%s.decode_(iter)", cacheKey);
+                } else {
+                    // can not use static "decode_" method to access, go through codegen cache
+                    return String.format("com.jsoniter.CodegenAccess.read(\"%s\", iter)", cacheKey);
+                }
+            }
+        }
+        if (valueType == boolean.class) {
+            if (!(decoder instanceof Decoder.BooleanDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.BooleanDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readBoolean(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == byte.class) {
+            if (!(decoder instanceof Decoder.ShortDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.ShortDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readShort(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == short.class) {
+            if (!(decoder instanceof Decoder.ShortDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.ShortDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readShort(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == char.class) {
+            if (!(decoder instanceof Decoder.IntDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.IntDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readInt(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == int.class) {
+            if (!(decoder instanceof Decoder.IntDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.IntDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readInt(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == long.class) {
+            if (!(decoder instanceof Decoder.LongDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.LongDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readLong(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == float.class) {
+            if (!(decoder instanceof Decoder.FloatDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.FloatDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readFloat(\"%s\", iter)", cacheKey);
+        }
+        if (valueType == double.class) {
+            if (!(decoder instanceof Decoder.DoubleDecoder)) {
+                throw new JsonException("decoder for " + cacheKey + "must implement Decoder.DoubleDecoder");
+            }
+            return String.format("com.jsoniter.CodegenAccess.readDouble(\"%s\", iter)", cacheKey);
+        }
+        return String.format("com.jsoniter.CodegenAccess.read(\"%s\", iter)", cacheKey);
+    }
+```
+</details>
+
+<details><summary>After</summary>
+
+```Java
+private static String handleNullDecoder(String cacheKey, Type valueType) {
+    if (valueType instanceof Class) {
+        Class clazz = (Class) valueType;
+        String nativeRead = NATIVE_READS.get(clazz.getCanonicalName());
+        if (nativeRead != null) {
+            return nativeRead;
+        }
+    } else if (valueType instanceof WildcardType) {
+        return NATIVE_READS.get(Object.class.getCanonicalName());
+    }
+    Codegen.getDecoder(cacheKey, valueType);
+    if (Codegen.canStaticAccess(cacheKey)) {
+        return String.format("%s.decode_(iter)", cacheKey);
+    } else {
+        // can not use static "decode_" method to access, go through codegen cache
+        return String.format("com.jsoniter.CodegenAccess.read(\"%s\", iter)", cacheKey);
+    }
+}
+
+private static String genReadOp(String cacheKey, Type valueType) {
+    // the field decoder might be registered directly
+    Decoder decoder = JsoniterSpi.getDecoder(cacheKey);
+    if (decoder == null) {
+        // if cache key is for field, and there is no field decoder specified
+        // update cache key for normal type
+        cacheKey = TypeLiteral.create(valueType).getDecoderCacheKey();
+        decoder = JsoniterSpi.getDecoder(cacheKey);
+        if (decoder == null) {
+            return handleNullDecoder(cacheKey, valueType);
+        }
+    }
+    
+    if (valueType == boolean.class) {
+        if (!(decoder instanceof Decoder.BooleanDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.BooleanDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readBoolean(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == byte.class) {
+        if (!(decoder instanceof Decoder.ShortDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.ShortDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readShort(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == short.class) {
+        if (!(decoder instanceof Decoder.ShortDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.ShortDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readShort(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == char.class) {
+        if (!(decoder instanceof Decoder.IntDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.IntDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readInt(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == int.class) {
+        if (!(decoder instanceof Decoder.IntDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.IntDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readInt(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == long.class) {
+        if (!(decoder instanceof Decoder.LongDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.LongDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readLong(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == float.class) {
+        if (!(decoder instanceof Decoder.FloatDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.FloatDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readFloat(\"%s\", iter)", cacheKey);
+    }
+    if (valueType == double.class) {
+        if (!(decoder instanceof Decoder.DoubleDecoder)) {
+            throw new JsonException("decoder for " + cacheKey + "must implement Decoder.DoubleDecoder");
+        }
+        return String.format("com.jsoniter.CodegenAccess.readDouble(\"%s\", iter)", cacheKey);
+    }
+    return String.format("com.jsoniter.CodegenAccess.read(\"%s\", iter)", cacheKey);
+}
+```
+</details>
+
 ## Coverage
 
 ### Tools
