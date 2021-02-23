@@ -555,6 +555,11 @@ and exceptions, if available in your language?
 
 ## Coverage improvement
 
+### chooseImpl
+chooseImpl is a very well-covered method with only three uncovered branches despite a high CCN. Two of these are when the program attempts to parse a Collection or Map derivative with an unexpected amount of generic parameters.
+
+Since this is a private function, It can't be called it directly. But there is no need to add any additional interfaces since the method is called early on in the process.
+
 Show the comments that describe the requirements for the coverage.
 
 Report of old coverage: [link]
