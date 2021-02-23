@@ -330,6 +330,115 @@ private static Type chooseImpl(Type type) {
 ```
 </details>
 
+### GsonCompatibilityMode::updateClassDescriptor, CCN = 16
+
+GsonCompatibilityMode::updateClassDescriptor is used to update the descriptor of classes and is used when deserialzing and serializing between json and Java objects. The CCN of the function is 16 and can be redused by extracting a large part of the code that is used to update the toNames and fromNames in the cases where an exclusion strategy is not specified.  
+
+<details><summary>Before</summary>
+
+```Java
+    public void updateClassDescriptor(ClassDescriptor desc) {
+        FieldNamingStrategy fieldNamingStrategy = builder().fieldNamingStrategy;
+        for (Binding binding : desc.allBindings()) {
+            if (binding.method != null) {
+                binding.toNames = new String[0];
+                binding.fromNames = new String[0];
+            }
+            if (fieldNamingStrategy != null && binding.field != null) {
+                String translated = fieldNamingStrategy.translateName(binding.field);
+                binding.toNames = new String[]{translated};
+                binding.fromNames = new String[]{translated};
+            }
+            if (builder().version != null) {
+                Since since = binding.getAnnotation(Since.class);
+                if (since != null && builder().version < since.value()) {
+                    binding.toNames = new String[0];
+                    binding.fromNames = new String[0];
+                }
+                Until until = binding.getAnnotation(Until.class);
+                if (until != null && builder().version >= until.value()) {
+                    binding.toNames = new String[0];
+                    binding.fromNames = new String[0];
+                }
+            }
+            for (ExclusionStrategy strategy : builder().serializationExclusionStrategies) {
+                if (strategy.shouldSkipClass(binding.clazz)) {
+                    binding.toNames = new String[0];
+                    continue;
+                }
+                if (strategy.shouldSkipField(new FieldAttributes(binding.field))) {
+                    binding.toNames = new String[0];
+                }
+            }
+            for (ExclusionStrategy strategy : builder().deserializationExclusionStrategies) {
+                if (strategy.shouldSkipClass(binding.clazz)) {
+                    binding.fromNames = new String[0];
+                    continue;
+                }
+                if (strategy.shouldSkipField(new FieldAttributes(binding.field))) {
+                    binding.fromNames = new String[0];
+                }
+            }
+        }
+        super.updateClassDescriptor(desc);
+    }
+```
+</details>
+<details><summary>After</summary>
+
+```Java
+    public void updateClassDescriptor(ClassDescriptor desc) {
+        FieldNamingStrategy fieldNamingStrategy = builder().fieldNamingStrategy;
+        for (Binding binding : desc.allBindings()) {
+            handleNonExclusionStrategyBinding(binding, fieldNamingStrategy);
+            for (ExclusionStrategy strategy : builder().serializationExclusionStrategies) {
+                if (strategy.shouldSkipClass(binding.clazz)) {
+                    binding.toNames = new String[0];
+                    continue;
+                }
+                if (strategy.shouldSkipField(new FieldAttributes(binding.field))) {
+                    binding.toNames = new String[0];
+                }
+            }
+            for (ExclusionStrategy strategy : builder().deserializationExclusionStrategies) {
+                if (strategy.shouldSkipClass(binding.clazz)) {
+                    binding.fromNames = new String[0];
+                    continue;
+                }
+                if (strategy.shouldSkipField(new FieldAttributes(binding.field))) {
+                    binding.fromNames = new String[0];
+                }
+            }
+        }
+        super.updateClassDescriptor(desc);
+    }
+
+    private void handleNonExclusionStrategyBinding(Binding binding, FieldNamingStrategy fieldNamingStrategy){
+        if (binding.method != null) {
+            binding.toNames = new String[0];
+            binding.fromNames = new String[0];
+        }
+        if (fieldNamingStrategy != null && binding.field != null) {
+            String translated = fieldNamingStrategy.translateName(binding.field);
+            binding.toNames = new String[]{translated};
+            binding.fromNames = new String[]{translated};
+        }
+        if (builder().version != null) {
+            Since since = binding.getAnnotation(Since.class);
+            if (since != null && builder().version < since.value()) {
+                binding.toNames = new String[0];
+                binding.fromNames = new String[0];
+            }
+            Until until = binding.getAnnotation(Until.class);
+            if (until != null && builder().version >= until.value()) {
+                binding.toNames = new String[0];
+                binding.fromNames = new String[0];
+            }
+        }
+    }
+```
+</details>
+
 ### CodegenImplNative::genReadOp, CCN = 23
 
 alosdhasodhöasdadasödasdgasdhsajdajsökdh
