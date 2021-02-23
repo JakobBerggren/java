@@ -332,7 +332,7 @@ private static Type chooseImpl(Type type) {
 
 ### CodegenImplNative::genReadOp, CCN = 23
 
-alosdhasodhöasdadasödasdgasdhsajdajsökdh
+CodegenImplNative::genReadOp is a function that generates a suitable read operation for the Type passed as the parameter **valueType**. It is returned as a String. The function can be identified to be seperable into two parts. The first part ensures that there is actually a decoder to be used for the specific data type. The second part uses the found decoder to test it against the Type **valueType**. This creates a natural way to refactor the code into two seperate functions: ``handleNullDecoder`` and ``genReadOp``. By refactoring the code we can expect to achieve a lower code complexity, and make it easier to read.
 
 <details> <summary> Before </summary>
 
